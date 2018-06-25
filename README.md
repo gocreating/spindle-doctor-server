@@ -23,3 +23,15 @@ mSe1TGnPKeTjZy8Y4yztQ8gypWB97f645qX4PgeIKhlcyevibfNnbFkM2c2sbAtw
 ```
 / $ npm run production
 ```
+
+## Upload file from postman
+
+1. Header
+
+  Use `Accept: multipart/form-data` and uncheck `Content-Type: application/x-www-form-urlencoded`.
+
+2. Body
+
+  Select the `form-data` type. Add key `file`, select `File` option and pick the file you want to upload.
+
+3. Send

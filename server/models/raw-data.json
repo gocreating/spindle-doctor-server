@@ -1,0 +1,30 @@
+{
+  "name": "RawData",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "originalFilename": {
+      "type": "string"
+    },
+    "size": {
+      "type": "number"
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": []
+}

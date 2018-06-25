@@ -35,6 +35,22 @@
     "dataSource": "mongoDs",
     "public": false
   },
+  "Container": {
+    "dataSource": "localFile",
+    "public": true
+  },
+  "RawData": {
+    "dataSource": "mongoDs",
+    "public": true,
+    "options": {
+      "remoting": {
+        "sharedMethods": {
+          "*": false,
+          "upload": true
+        }
+      }
+    }
+  },
   "TongtaiUser": {
     "dataSource": "mongoDs",
     "public": true,
