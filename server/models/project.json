@@ -10,6 +10,10 @@
     "name": {
       "type": "string",
       "required": true
+    },
+    "created": {
+      "type": "date",
+      "defaultFn": "now"
     }
   },
   "validations": [],
@@ -21,6 +25,11 @@
       "options": {
         "nestRemoting": true
       }
+    },
+    "datasets": {
+      "type": "hasMany",
+      "model": "Dataset",
+      "foreignKey": "projectId"
     }
   },
   "acls": [
@@ -42,6 +51,13 @@
       "principalId": "admin",
       "permission": "ALLOW",
       "property": "find"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "upload"
     }
   ],
   "methods": {}

@@ -1,17 +1,23 @@
+'use strict';
+
 // https://stackoverflow.com/questions/28885282/how-to-store-files-with-meta-data-in-loopback
 var CONTAINERS_URL = '/api/containers/';
 
-module.exports = function(RawData) {
-  RawData.upload = function(ctx, options, cb) {
+module.exports = function defineUploadDataset(app) {
+  var Project = app.models.Project;
+  var Dataset = app.models.Dataset;
+  var Container = app.models.Container;
+
+  Project.upload = function(ctx, options, id, fk, cb) {
     if (!options) options = {};
-    ctx.req.params.container = 'raw-data';
-    RawData.app.models.Container.upload(ctx.req, ctx.result, options, function(err, fileObj) {
+    ctx.req.params.container = fk;
+    Container.upload(ctx.req, ctx.result, options, function(err, fileObj) {
       if (err) {
         cb(err);
       } else {
         var fileInfo = fileObj.files.file[0];
 
-        RawData.create({
+        Dataset.create({
           name: fileInfo.name,
           type: fileInfo.type,
           originalFilename: fileInfo.originalFilename,
@@ -28,19 +34,4 @@ module.exports = function(RawData) {
       }
     });
   };
-
-  RawData.remoteMethod(
-    'upload',
-    {
-      description: 'Uploads a raw data file with .csv format',
-      accepts: [
-        { arg: 'ctx', type: 'object', http: { source: 'context' } },
-        { arg: 'options', type: 'object', http: { source: 'query'} },
-      ],
-      returns: {
-        arg: 'fileObject', type: 'object', root: true,
-      },
-      http: { verb: 'post' }
-    }
-  );
 };

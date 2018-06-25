@@ -1,5 +1,5 @@
 {
-  "name": "RawData",
+  "name": "Dataset",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
@@ -21,10 +21,23 @@
     "url": {
       "type": "string",
       "required": true
+    },
+    "created": {
+      "type": "date",
+      "defaultFn": "now"
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "owner": {
+      "type": "belongsTo",
+      "model": "Project",
+      "foreignKey": "projectId",
+      "options": {
+        "nestRemoting": true
+      }
+    }
+  },
   "acls": [],
   "methods": []
 }

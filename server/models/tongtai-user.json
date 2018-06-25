@@ -16,10 +16,7 @@
     "projects": {
       "type": "hasMany",
       "model": "Project",
-      "foreignKey": "ownerId",
-      "options": {
-        "nestRemoting": true
-      }
+      "foreignKey": "ownerId"
     }
   },
   "acls": [
