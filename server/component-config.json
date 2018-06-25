@@ -1,0 +1,10 @@
+{
+  "loopback-component-explorer": {
+    "mountPath": "/explorer",
+    "generateOperationScopedModels": true,
+    "apiInfo": {
+      "title": "Spindle Doctor API explorer",
+      "description": "API explorer of spindle doctor"
+    }
+  }
+}

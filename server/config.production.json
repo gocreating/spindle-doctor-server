@@ -1,0 +1,8 @@
+{
+  "port": 7000,
+  "remoting": {
+    "rest": {
+      "handleErrors": true
+    }
+  }
+}

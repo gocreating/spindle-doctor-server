@@ -1,0 +1,20 @@
+{
+  "files": {
+    "loopback#static": {
+      "enabled": false
+    }
+  },
+  "files:after": {
+    "./middlewares/reactRouter": {
+      "enabled": false
+    }
+  },
+  "final:after": {
+    "strong-error-handler": {
+      "params": {
+        "debug": true,
+        "log": true
+      }
+    }
+  }
+}
