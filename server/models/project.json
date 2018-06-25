@@ -2,6 +2,7 @@
   "name": "Project",
   "base": "PersistedModel",
   "idInjection": true,
+  "injectOptionsFromRemoteContext": true,
   "options": {
     "validateUpsert": true
   },
