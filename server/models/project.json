@@ -39,14 +39,14 @@
     {
       "accessType": "READ",
       "principalType": "ROLE",
-      "principalId": "$authenticated",
+      "principalId": "admin",
       "permission": "ALLOW",
       "property": "find"
     },
     {
       "accessType": "READ",
       "principalType": "ROLE",
-      "principalId": "$everyone",
+      "principalId": "admin",
       "permission": "ALLOW",
       "property": "findById"
     },
