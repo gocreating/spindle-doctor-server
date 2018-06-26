@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = function(Project) {
   // Project.observe('before save', function(ctx, next) {
   //   var accessToken = ctx.options && ctx.options.accessToken;
@@ -13,15 +15,30 @@ module.exports = function(Project) {
 
   Project.remoteMethod('upload', {
     description: 'Uploads a raw data file with .csv format',
-    accepts: [
-      { arg: 'ctx', type: 'object', http: { source: 'context' } },
-      { arg: 'options', type: 'object', http: { source: 'query' } },
-      { arg: 'id', type: 'any', required: true },
-      { arg: 'fk', type: 'any', required: true, description: 'container name, currently supports `raw-data`' },
-    ],
+    accepts: [{
+      arg: 'ctx',
+      type: 'object',
+      http: { source: 'context' },
+    }, {
+      arg: 'options',
+      type: 'object',
+      http: { source: 'query' },
+    }, {
+      arg: 'id',
+      type: 'any',
+      required: true,
+    }, {
+      arg: 'fk',
+      type: 'any',
+      required: true,
+      description: 'container name, currently supports `raw-data`',
+    }],
     returns: {
       arg: 'fileObject', type: 'object', root: true,
     },
-    http: { verb: 'post', path: '/:id/datasets/:fk/upload' }
+    http: {
+      verb: 'post',
+      path: '/:id/datasets/:fk/upload',
+    },
   });
-}
+};

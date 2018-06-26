@@ -1,8 +1,6 @@
 'use strict';
 
 // https://stackoverflow.com/questions/28885282/how-to-store-files-with-meta-data-in-loopback
-var CONTAINERS_URL = '/api/containers/';
-
 module.exports = function defineUploadDataset(app) {
   var Project = app.models.Project;
   var Dataset = app.models.Dataset;
@@ -11,20 +9,33 @@ module.exports = function defineUploadDataset(app) {
   Project.upload = function(ctx, options, id, fk, cb) {
     if (!options) options = {};
     ctx.req.params.container = fk;
-    Container.upload(ctx.req, ctx.result, options, function(err, fileObj) {
-      if (err) {
-        cb(err);
-      } else {
-        var fileInfo = fileObj.files.file[0];
+    Container.upload(
+      ctx.req,
+      ctx.result,
+      options,
+      function(err, { files, fields } = {}) {
+        if (err) {
+          return cb(err);
+        }
 
-        Dataset.create({
+        var fileInfo = files.file[0];
+        var dataset = {
           name: fileInfo.name,
           type: fileInfo.type,
           originalFilename: fileInfo.originalFilename,
           size: fileInfo.size,
           container: fileInfo.container,
-          url: CONTAINERS_URL + fileInfo.container + '/download/' + fileInfo.name
-        }, function(err, obj) {
+          url: (
+            '/api/containers/' + fileInfo.container +
+            '/download/' + fileInfo.name
+          ),
+        };
+
+        fields = fields || {};
+        if (fields.description) {
+          dataset.description = fields.description[0];
+        }
+        Dataset.create(dataset, function(err, obj) {
           if (err !== null) {
             cb(err);
           } else {
@@ -32,6 +43,6 @@ module.exports = function defineUploadDataset(app) {
           }
         });
       }
-    });
+    );
   };
 };

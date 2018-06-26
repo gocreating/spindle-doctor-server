@@ -28,7 +28,7 @@ mSe1TGnPKeTjZy8Y4yztQ8gypWB97f645qX4PgeIKhlcyevibfNnbFkM2c2sbAtw
 
 1. Header
 
-  Use `Accept: multipart/form-data` and uncheck `Content-Type: application/x-www-form-urlencoded`.
+  No header needs to be set.
 
 2. Body
 
