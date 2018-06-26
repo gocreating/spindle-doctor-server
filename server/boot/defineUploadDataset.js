@@ -29,6 +29,7 @@ module.exports = function defineUploadDataset(app) {
             '/api/containers/' + fileInfo.container +
             '/download/' + fileInfo.name
           ),
+          projectId: id,
         };
 
         fields = fields || {};

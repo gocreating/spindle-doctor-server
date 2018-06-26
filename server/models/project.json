@@ -57,7 +57,10 @@
       "principalType": "ROLE",
       "principalId": "$owner",
       "permission": "ALLOW",
-      "property": "upload"
+      "property": [
+        "__get__datasets",
+        "upload"
+      ]
     }
   ],
   "methods": {}
