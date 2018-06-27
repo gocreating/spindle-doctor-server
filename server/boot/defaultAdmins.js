@@ -1,6 +1,6 @@
 'use strict';
 
-var async = require("async");
+var async = require('async');
 
 module.exports = function defaultAdmins(app) {
   var TongtaiUser = app.models.TongtaiUser;
@@ -10,15 +10,15 @@ module.exports = function defaultAdmins(app) {
 
   // create the admin role
   Role.findOrCreate({
-    where: { name: 'admin' }
+    where: { name: 'admin' },
   }, {
-    name: 'admin'
+    name: 'admin',
   }, function(err, role) {
     if (err) throw err;
 
     async.eachSeries(adminInfo.admins, (admin, callback) => {
       TongtaiUser.findOrCreate({
-        where: { email: admin.email }
+        where: { email: admin.email },
       }, admin, function(err, user) {
         if (err) throw err;
 
