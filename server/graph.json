@@ -1,0 +1,9 @@
+{
+  "graphs":  [
+    {
+      "name": "autoencoder-classification",
+      "description": "Use reconstruction-based RNN autoencoder to detect anomalies.",
+      "scriptPath": "../spindle-doctor/src/classification-anomaly-detection.py"
+    }
+  ]
+}
