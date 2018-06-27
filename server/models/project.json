@@ -2,10 +2,10 @@
   "name": "Project",
   "base": "PersistedModel",
   "idInjection": true,
-  "injectOptionsFromRemoteContext": true,
   "options": {
     "validateUpsert": true
   },
+  "injectOptionsFromRemoteContext": true,
   "properties": {
     "name": {
       "type": "string",
