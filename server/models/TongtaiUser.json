@@ -1,5 +1,6 @@
 {
   "name": "TongtaiUser",
+  "plural": "tongtai-users",
   "base": "User",
   "idInjection": true,
   "options": {

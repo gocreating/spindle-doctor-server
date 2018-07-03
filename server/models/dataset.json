@@ -1,5 +1,6 @@
 {
   "name": "Dataset",
+  "plural": "datasets",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {

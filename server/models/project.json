@@ -1,5 +1,6 @@
 {
   "name": "Project",
+  "plural": "projects",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
