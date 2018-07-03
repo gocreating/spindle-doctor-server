@@ -22,8 +22,7 @@
       "type": "number"
     },
     "url": {
-      "type": "string",
-      "required": true
+      "type": "string"
     },
     "created": {
       "type": "date",
