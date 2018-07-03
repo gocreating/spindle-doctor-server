@@ -81,5 +81,23 @@
         }
       }
     }
+  },
+  "Session": {
+    "dataSource": "mongoDs",
+    "public": true,
+    "remoting": {
+      "sharedMethods": {
+        "*": false
+      }
+    }
+  },
+  "SessionDataset": {
+    "dataSource": "mongoDs",
+    "public": true,
+    "remoting": {
+      "sharedMethods": {
+        "*": false
+      }
+    }
   }
 }

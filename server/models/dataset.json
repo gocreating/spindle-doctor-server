@@ -39,6 +39,12 @@
       "options": {
         "nestRemoting": true
       }
+    },
+    "sessions": {
+      "type": "hasMany",
+      "model": "Session",
+      "foreignKey": "datasetId",
+      "through": "SessionDataset"
     }
   },
   "acls": [],

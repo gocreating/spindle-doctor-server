@@ -1,0 +1,25 @@
+{
+  "name": "SessionDataset",
+  "plural": "sessions-datasets",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {},
+  "validations": [],
+  "relations": {
+    "session": {
+      "type": "belongsTo",
+      "model": "Session",
+      "foreignKey": "sessionId"
+    },
+    "dataset": {
+      "type": "belongsTo",
+      "model": "Dataset",
+      "foreignKey": "datasetId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

@@ -31,6 +31,11 @@
       "type": "hasMany",
       "model": "Dataset",
       "foreignKey": "projectId"
+    },
+    "sessions": {
+      "type": "hasMany",
+      "model": "Session",
+      "foreignKey": "projectId"
     }
   },
   "acls": [
@@ -60,7 +65,10 @@
       "permission": "ALLOW",
       "property": [
         "__get__datasets",
-        "upload"
+        "upload",
+        "__create__sessions",
+        "__get__sessions",
+        "__findById__sessions"
       ]
     }
   ],
