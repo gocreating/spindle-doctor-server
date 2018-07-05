@@ -4,7 +4,7 @@ var async = require('async');
 
 module.exports = function defaultAdmins(app) {
   var Graph = app.models.Graph;
-  var graphInfo = require('../initial-data/graph.json');
+  var graphInfo = require('../initial-data/graphs.json');
 
   async.eachSeries(graphInfo.graphs, (graph, callback) => {
     Graph.findOrCreate(
