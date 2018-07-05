@@ -1,0 +1,21 @@
+{
+  "files": {
+    "loopback#static": {
+      "params": "$!../client/build"
+    }
+  },
+  "files:after": {
+    "./middlewares/reactRouter": {
+      "enabled": false
+    }
+  },
+  "final:after": {
+    "strong-error-handler": {
+      "params": {
+        "debug": false,
+        "log": true,
+        "includeStack": false
+      }
+    }
+  }
+}

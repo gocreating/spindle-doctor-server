@@ -8,7 +8,9 @@
   "scripts": {
     "lint": "eslint .",
     "dev": "cross-env NODE_ENV=development nodemon .",
-    "posttest": "npm run lint && nsp check",
+    "test": "cross-env NODE_ENV=test mocha --timeout 50000 test/main-endpoints.js",
+    "posttest": "npm run lint",
+    "nsp": "nsp check",
     "production": "cross-env NODE_ENV=production node ."
   },
   "dependencies": {
@@ -24,10 +26,12 @@
     "strong-error-handler": "^2.0.0"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
     "cross-env": "^5.2.0",
     "eslint": "^3.17.1",
     "eslint-config-loopback": "^8.0.0",
-    "nsp": "^2.1.0"
+    "nsp": "^2.1.0",
+    "superagent": "^3.8.3"
   },
   "repository": {
     "type": "",
