@@ -7,7 +7,8 @@
     "validateUpsert": true
   },
   "hidden": [
-    "scriptPath"
+    "trainScriptPath",
+    "inferenceScriptPath"
   ],
   "properties": {
     "name": {
@@ -17,7 +18,11 @@
     "description": {
       "type": "string"
     },
-    "scriptPath": {
+    "trainScriptPath": {
+      "type": "string",
+      "required": true
+    },
+    "inferenceScriptPath": {
       "type": "string",
       "required": true
     }

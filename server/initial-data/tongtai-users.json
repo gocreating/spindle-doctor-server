@@ -1,0 +1,14 @@
+{
+  "admins":  [
+    {
+      "name": "Root",
+      "email": "root@tt.com",
+      "password": "root"
+    },
+    {
+      "name": "Admin",
+      "email": "admin@tt.com",
+      "password": "admin"
+    }
+  ]
+}

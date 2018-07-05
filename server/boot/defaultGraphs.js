@@ -4,7 +4,7 @@ var async = require('async');
 
 module.exports = function defaultAdmins(app) {
   var Graph = app.models.Graph;
-  var graphInfo = require('../graph.json');
+  var graphInfo = require('../initial-data/graph.json');
 
   async.eachSeries(graphInfo.graphs, (graph, callback) => {
     Graph.findOrCreate(
@@ -12,7 +12,7 @@ module.exports = function defaultAdmins(app) {
       graph,
       function(err, graph) {
         if (err) throw err;
-        console.log('Graph', graph.name, 'created');
+        console.log('>> Graph', graph.name, 'created');
         callback();
       }
     );

@@ -6,7 +6,7 @@ module.exports = function defaultAdmins(app) {
   var TongtaiUser = app.models.TongtaiUser;
   var Role = app.models.Role;
   var RoleMapping = app.models.RoleMapping;
-  var adminInfo = require('../admin.json');
+  var tongtaiUsers = require('../initial-data/tongtai-users.json');
 
   // create the admin role
   Role.findOrCreate({
@@ -16,7 +16,7 @@ module.exports = function defaultAdmins(app) {
   }, function(err, role) {
     if (err) throw err;
 
-    async.eachSeries(adminInfo.admins, (admin, callback) => {
+    async.eachSeries(tongtaiUsers.admins, (admin, callback) => {
       TongtaiUser.findOrCreate({
         where: { email: admin.email },
       }, admin, function(err, user) {
@@ -36,7 +36,7 @@ module.exports = function defaultAdmins(app) {
         }, function(err, principal) {
           if (err) throw err;
 
-          console.log('Default admin', user.email, 'created');
+          console.log('>> Default admin', user.email, 'created');
           callback();
         });
       });
