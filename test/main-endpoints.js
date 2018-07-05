@@ -31,161 +31,61 @@ describe('End-to-End Test', function() {
     process.exit();
   });
 
-  it('Guest should signup', function(done) {
-    superagent
-      .post(HOST + '/api/tongtai-users')
-      .send({
-        name: member.name,
-        email: member.email,
-        password: member.password,
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .end(function(err, res) {
-        if (err) { return done(err); }
-
-        assert.equal(res.status, 200);
-        assert.ok(res.body);
-        done();
-      });
-  });
-
-  it('Registered user should log in', function(done) {
-    async.forEachOf([member, admin], (user, idx, callback) => {
+  describe('#TongtaiUser', function() {
+    it('Guest should signup', function(done) {
       superagent
-        .post(HOST + '/api/tongtai-users/login')
+        .post(HOST + '/api/tongtai-users')
         .send({
-          email: admin.email,
-          password: admin.password,
+          name: member.name,
+          email: member.email,
+          password: member.password,
         })
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .end(function(err, res) {
-          if (err) { return callback(err); }
+          if (err) { return done(err); }
 
           assert.equal(res.status, 200);
           assert.ok(res.body);
-
-          if (idx == 0) {
-            memberUserId = res.body.userId;
-            memberUserToken = res.body.id;
-          } else if (idx == 1) {
-            adminUserId = res.body.userId;
-            adminUserToken = res.body.id;
-          }
-          callback();
+          done();
         });
-    }, done);
+    });
+
+    it('Registered user should log in', function(done) {
+      async.forEachOf([member, admin], (user, idx, callback) => {
+        superagent
+          .post(HOST + '/api/tongtai-users/login')
+          .send({
+            email: admin.email,
+            password: admin.password,
+          })
+          .set('Accept', 'application/json')
+          .set('Content-Type', 'application/json')
+          .end(function(err, res) {
+            if (err) { return callback(err); }
+
+            assert.equal(res.status, 200);
+            assert.ok(res.body);
+
+            if (idx == 0) {
+              memberUserId = res.body.userId;
+              memberUserToken = res.body.id;
+            } else if (idx == 1) {
+              adminUserId = res.body.userId;
+              adminUserToken = res.body.id;
+            }
+            callback();
+          });
+      }, done);
+    });
   });
 
-  it('Authenticated user should create project', function(done) {
-    superagent
-      .post(HOST + '/api/tongtai-users/' + memberUserId + '/projects')
-      .query({ 'access_token': memberUserToken })
-      .send({ name: 'CNC Drilling Machine' })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .end(function(err, res) {
-        if (err) { return done(err); }
-
-        assert.equal(res.status, 200);
-        assert.ok(res.body);
-        assert.containsAllKeys(res.body, ['ownerId']);
-        projectId = res.body.id;
-        done();
-      });
-  });
-
-  it('Unauthenticated user should not create project', function(done) {
-    superagent
-      .post(HOST + '/api/tongtai-users/' + memberUserId + '/projects')
-      .send({ name: 'CNC Drilling Machine' })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .end(function(err, res) {
-        assert.equal(err.status, 401);
-        done();
-      });
-  });
-
-  it('Guest should list graphs', function(done) {
-    superagent
-      .get(HOST + '/api/graphs')
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .end(function(err, res) {
-        if (err) { return done(err); }
-
-        assert.equal(res.status, 200);
-        assert.ok(res.body);
-        graphId = res.body[0].id;
-        async.forEachOf(res.body, function(returnedGraph, idx, callback) {
-          assert.equal(returnedGraph.name, graphs[idx].name);
-          callback();
-        }, done);
-      });
-  });
-
-  it(
-    'Project owner should upload datasets with description',
-    function(done) {
-      var DESCRIPTION = 'test foo bar';
-
+  describe('#Project', function() {
+    it('Authenticated user should create a project', function(done) {
       superagent
-        .post(HOST + '/api/projects/' + projectId + '/datasets/raw-data/upload')
+        .post(HOST + '/api/tongtai-users/' + memberUserId + '/projects')
         .query({ 'access_token': memberUserToken })
-        .set('Accept', 'application/json')
-        .attach('file', './test/sample-data.csv')
-        .field('description', DESCRIPTION)
-        .type('form')
-        .on('progress', event => {})
-        .on('error', (err) => {})
-        .end(function(err, res) {
-          if (err) { return done(err); }
-
-          assert.equal(res.status, 200);
-          assert.ok(res.body);
-          assert.equal(res.body.description, DESCRIPTION);
-          datasetId = res.body.id;
-          done();
-        });
-    }
-  );
-
-  it('Project owner should create session', function(done) {
-    superagent
-      .post(HOST + '/api/projects/' + projectId + '/sessions')
-      .query({ 'access_token': memberUserToken })
-      .send({
-        name: 'sample-session',
-        description: 'test session in a sandbox',
-        featureFields: ['feature1', 'feature2'],
-        targetField: 'label',
-        hyperParameters: {},
-        graphId: graphId,
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .end(function(err, res) {
-        if (err) { return done(err); }
-
-        assert.equal(res.status, 200);
-        assert.ok(res.body);
-        assert.containsAllKeys(res.body, ['projectId']);
-        sessionId = res.body.id;
-        done();
-      });
-  });
-
-  it(
-    'Guest should link session with one dataset within a request',
-    function(done) {
-      superagent
-        .post(HOST + '/api/sessions-datasets')
-        .send({
-          sessionId: sessionId,
-          datasetId: datasetId,
-        })
+        .send({ name: 'CNC Drilling Machine' })
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .end(function(err, res) {
@@ -193,32 +93,144 @@ describe('End-to-End Test', function() {
 
           assert.equal(res.status, 200);
           assert.ok(res.body);
+          assert.containsAllKeys(res.body, ['ownerId']);
+          projectId = res.body.id;
           done();
         });
-    }
-  );
+    });
 
-  it('Project owner should get session with related data', function(done) {
-    superagent
-      .get(HOST + '/api/projects/' + projectId + '/sessions')
-      .query({
-        'access_token': memberUserToken,
-        filter: {
-          where: { id: sessionId },
-          include: ['datasets', 'graph', 'project'],
-        },
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json')
-      .end(function(err, res) {
-        if (err) { return done(err); }
+    it('Unauthenticated user should not create a project', function(done) {
+      superagent
+        .post(HOST + '/api/tongtai-users/' + memberUserId + '/projects')
+        .send({ name: 'CNC Drilling Machine' })
+        .set('Accept', 'application/json')
+        .set('Content-Type', 'application/json')
+        .end(function(err, res) {
+          assert.equal(err.status, 401);
+          done();
+        });
+    });
 
-        var session = res.body[0];
-        assert.equal(res.status, 200);
-        assert.ok(res.body);
-        assert.containsAllKeys(session, ['graph', 'project', 'datasets']);
-        assert.isArray(session.datasets, 'datasets is not an array');
-        done();
+    describe('#Graph', function() {
+      it('Guest should list graphs', function(done) {
+        superagent
+          .get(HOST + '/api/graphs')
+          .set('Accept', 'application/json')
+          .set('Content-Type', 'application/json')
+          .end(function(err, res) {
+            if (err) { return done(err); }
+
+            assert.equal(res.status, 200);
+            assert.ok(res.body);
+            graphId = res.body[0].id;
+            async.forEachOf(res.body, function(returnedGraph, idx, callback) {
+              assert.equal(returnedGraph.name, graphs[idx].name);
+              callback();
+            }, done);
+          });
       });
+    });
+
+    describe('#Dataset', function() {
+      it(
+        'Project owner should upload datasets with description',
+        function(done) {
+          var DESCRIPTION = 'test foo bar';
+
+          superagent
+            .post(
+              HOST + '/api/projects/' + projectId + '/datasets/raw-data/upload'
+            )
+            .query({ 'access_token': memberUserToken })
+            .set('Accept', 'application/json')
+            .attach('file', './test/sample-data.csv')
+            .field('description', DESCRIPTION)
+            .type('form')
+            .on('progress', event => {})
+            .on('error', (err) => {})
+            .end(function(err, res) {
+              if (err) { return done(err); }
+
+              assert.equal(res.status, 200);
+              assert.ok(res.body);
+              assert.equal(res.body.description, DESCRIPTION);
+              datasetId = res.body.id;
+              done();
+            });
+        }
+      );
+    });
+
+    describe('#Session', function() {
+      it('Project owner should create session', function(done) {
+        superagent
+          .post(HOST + '/api/projects/' + projectId + '/sessions')
+          .query({ 'access_token': memberUserToken })
+          .send({
+            name: 'sample-session',
+            description: 'test session in a sandbox',
+            featureFields: ['feature1', 'feature2'],
+            targetField: 'label',
+            hyperParameters: {},
+            graphId: graphId,
+          })
+          .set('Accept', 'application/json')
+          .set('Content-Type', 'application/json')
+          .end(function(err, res) {
+            if (err) { return done(err); }
+
+            assert.equal(res.status, 200);
+            assert.ok(res.body);
+            assert.containsAllKeys(res.body, ['projectId']);
+            sessionId = res.body.id;
+            done();
+          });
+      });
+
+      it(
+        'Guest should link specific session with a dataset',
+        function(done) {
+          superagent
+            .post(HOST + '/api/sessions-datasets')
+            .send({
+              sessionId: sessionId,
+              datasetId: datasetId,
+            })
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .end(function(err, res) {
+              if (err) { return done(err); }
+
+              assert.equal(res.status, 200);
+              assert.ok(res.body);
+              done();
+            });
+        }
+      );
+
+      it('Project owner should get session with related data', function(done) {
+        superagent
+          .get(HOST + '/api/projects/' + projectId + '/sessions')
+          .query({
+            'access_token': memberUserToken,
+            filter: {
+              where: { id: sessionId },
+              include: ['datasets', 'graph', 'project'],
+            },
+          })
+          .set('Accept', 'application/json')
+          .set('Content-Type', 'application/json')
+          .end(function(err, res) {
+            if (err) { return done(err); }
+
+            var session = res.body[0];
+            assert.equal(res.status, 200);
+            assert.ok(res.body);
+            assert.containsAllKeys(session, ['graph', 'project', 'datasets']);
+            assert.isArray(session.datasets, 'datasets is not an array');
+            done();
+          });
+      });
+    });
   });
 });
