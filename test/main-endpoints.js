@@ -17,6 +17,8 @@ describe('End-to-End Test', function() {
   var memberUserId = '';
   var memberUserToken = '';
   var projectId = '';
+  var graphId = '';
+  var datasetId = '';
 
   before(function(done) {
     server = app.listen(function waitForBoot() {
@@ -87,6 +89,7 @@ describe('End-to-End Test', function() {
 
         assert.equal(res.status, 200);
         assert.ok(res.body);
+        assert.containsAllKeys(res.body, ['ownerId']);
         projectId = res.body.id;
         done();
       });
@@ -104,10 +107,9 @@ describe('End-to-End Test', function() {
       });
   });
 
-  it('Authenticated user should list graphs', function(done) {
+  it('Guest should list graphs', function(done) {
     superagent
       .get(HOST + '/api/graphs')
-      .query({ 'access_token': memberUserToken })
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
       .end(function(err, res) {
@@ -115,10 +117,37 @@ describe('End-to-End Test', function() {
 
         assert.equal(res.status, 200);
         assert.ok(res.body);
-        res.body.forEach(function(returnedGraph, idx) {
+        graphId = res.body[0].id;
+        async.forEachOf(res.body, function(returnedGraph, idx, callback) {
           assert.equal(returnedGraph.name, graphs[idx].name);
-        });
-        done();
+          callback();
+        }, done);
       });
   });
+
+  it(
+    'Project owner should upload datasets with description',
+    function(done) {
+      var DESCRIPTION = 'test foo bar';
+
+      superagent
+        .post(HOST + '/api/projects/' + projectId + '/datasets/raw-data/upload')
+        .query({ 'access_token': memberUserToken })
+        .set('Accept', 'application/json')
+        .attach('file', './test/sample-data.csv')
+        .field('description', DESCRIPTION)
+        .type('form')
+        .on('progress', event => {})
+        .on('error', (err) => {})
+        .end(function(err, res) {
+          if (err) { return done(err); }
+
+          assert.equal(res.status, 200);
+          assert.ok(res.body);
+          assert.equal(res.body.description, DESCRIPTION);
+          datasetId = res.body.id;
+          done();
+        });
+    }
+  );
 });
