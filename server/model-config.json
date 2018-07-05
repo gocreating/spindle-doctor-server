@@ -84,7 +84,7 @@
   },
   "Session": {
     "dataSource": "mongoDs",
-    "public": true,
+    "public": false,
     "remoting": {
       "sharedMethods": {
         "*": false
@@ -93,11 +93,6 @@
   },
   "SessionDataset": {
     "dataSource": "mongoDs",
-    "public": true,
-    "remoting": {
-      "sharedMethods": {
-        "*": false
-      }
-    }
+    "public": true
   }
 }
