@@ -6,9 +6,9 @@ var async = require('async');
 var app = require('../server/server');
 var tongtaiUsers = require('../server/initial-data/tongtai-users.json');
 var graphs = require('../server/initial-data/graphs.json').graphs;
-var HOST = 'http://localhost:5000';
+var ENDPOINT = 'http://localhost:5000/api';
 
-describe('End-to-End Test', function() {
+describe('\n\nEnd-to-End Test', function() {
   var server;
   var admin = tongtaiUsers.admins[0];
   var member = tongtaiUsers.users[0];
@@ -34,7 +34,7 @@ describe('End-to-End Test', function() {
   describe('#TongtaiUser', function() {
     it('Guest should signup', function(done) {
       superagent
-        .post(HOST + '/api/tongtai-users')
+        .post(ENDPOINT + '/tongtai-users')
         .send({
           name: member.name,
           email: member.email,
@@ -54,7 +54,7 @@ describe('End-to-End Test', function() {
     it('Registered user should log in', function(done) {
       async.forEachOf([member, admin], (user, idx, callback) => {
         superagent
-          .post(HOST + '/api/tongtai-users/login')
+          .post(ENDPOINT + '/tongtai-users/login')
           .send({
             email: admin.email,
             password: admin.password,
@@ -83,7 +83,7 @@ describe('End-to-End Test', function() {
   describe('#Project', function() {
     it('Authenticated user should create a project', function(done) {
       superagent
-        .post(HOST + '/api/tongtai-users/' + memberUserId + '/projects')
+        .post(ENDPOINT + '/tongtai-users/' + memberUserId + '/projects')
         .query({ 'access_token': memberUserToken })
         .send({ name: 'CNC Drilling Machine' })
         .set('Accept', 'application/json')
@@ -101,7 +101,7 @@ describe('End-to-End Test', function() {
 
     it('Unauthenticated user should not create a project', function(done) {
       superagent
-        .post(HOST + '/api/tongtai-users/' + memberUserId + '/projects')
+        .post(ENDPOINT + '/tongtai-users/' + memberUserId + '/projects')
         .send({ name: 'CNC Drilling Machine' })
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
@@ -114,7 +114,7 @@ describe('End-to-End Test', function() {
     describe('#Graph', function() {
       it('Guest should list graphs', function(done) {
         superagent
-          .get(HOST + '/api/graphs')
+          .get(ENDPOINT + '/graphs')
           .set('Accept', 'application/json')
           .set('Content-Type', 'application/json')
           .end(function(err, res) {
@@ -139,7 +139,7 @@ describe('End-to-End Test', function() {
 
           superagent
             .post(
-              HOST + '/api/projects/' + projectId + '/datasets/raw-data/upload'
+              ENDPOINT + '/projects/' + projectId + '/datasets/raw-data/upload'
             )
             .query({ 'access_token': memberUserToken })
             .set('Accept', 'application/json')
@@ -164,7 +164,7 @@ describe('End-to-End Test', function() {
     describe('#Session', function() {
       it('Project owner should create session', function(done) {
         superagent
-          .post(HOST + '/api/projects/' + projectId + '/sessions')
+          .post(ENDPOINT + '/projects/' + projectId + '/sessions')
           .query({ 'access_token': memberUserToken })
           .send({
             name: 'sample-session',
@@ -191,7 +191,7 @@ describe('End-to-End Test', function() {
         'Guest should link specific session with a dataset',
         function(done) {
           superagent
-            .post(HOST + '/api/sessions-datasets')
+            .post(ENDPOINT + '/sessions-datasets')
             .send({
               sessionId: sessionId,
               datasetId: datasetId,
@@ -210,7 +210,7 @@ describe('End-to-End Test', function() {
 
       it('Project owner should get session with related data', function(done) {
         superagent
-          .get(HOST + '/api/projects/' + projectId + '/sessions')
+          .get(ENDPOINT + '/projects/' + projectId + '/sessions')
           .query({
             'access_token': memberUserToken,
             filter: {
