@@ -10,5 +10,12 @@
       "email": "admin@tt.com",
       "password": "admin"
     }
+  ],
+  "users": [
+    {
+      "name": "Go creating",
+      "email": "gocreating@gmail.com",
+      "password": "gocreating"
+    }
   ]
 }
