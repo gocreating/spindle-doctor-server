@@ -19,6 +19,7 @@ describe('End-to-End Test', function() {
   var projectId = '';
   var graphId = '';
   var datasetId = '';
+  var sessionId = '';
 
   before(function(done) {
     server = app.listen(function waitForBoot() {
@@ -150,4 +151,74 @@ describe('End-to-End Test', function() {
         });
     }
   );
+
+  it('Project owner should create session', function(done) {
+    superagent
+      .post(HOST + '/api/projects/' + projectId + '/sessions')
+      .query({ 'access_token': memberUserToken })
+      .send({
+        name: 'sample-session',
+        description: 'test session in a sandbox',
+        featureFields: ['feature1', 'feature2'],
+        targetField: 'label',
+        hyperParameters: {},
+        graphId: graphId,
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .end(function(err, res) {
+        if (err) { return done(err); }
+
+        assert.equal(res.status, 200);
+        assert.ok(res.body);
+        assert.containsAllKeys(res.body, ['projectId']);
+        sessionId = res.body.id;
+        done();
+      });
+  });
+
+  it(
+    'Guest should link session with one dataset within a request',
+    function(done) {
+      superagent
+        .post(HOST + '/api/sessions-datasets')
+        .send({
+          sessionId: sessionId,
+          datasetId: datasetId,
+        })
+        .set('Accept', 'application/json')
+        .set('Content-Type', 'application/json')
+        .end(function(err, res) {
+          if (err) { return done(err); }
+
+          assert.equal(res.status, 200);
+          assert.ok(res.body);
+          done();
+        });
+    }
+  );
+
+  it('Project owner should get session with related data', function(done) {
+    superagent
+      .get(HOST + '/api/projects/' + projectId + '/sessions')
+      .query({
+        'access_token': memberUserToken,
+        filter: {
+          where: { id: sessionId },
+          include: ['datasets', 'graph', 'project'],
+        },
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .end(function(err, res) {
+        if (err) { return done(err); }
+
+        var session = res.body[0];
+        assert.equal(res.status, 200);
+        assert.ok(res.body);
+        assert.containsAllKeys(session, ['graph', 'project', 'datasets']);
+        assert.isArray(session.datasets, 'datasets is not an array');
+        done();
+      });
+  });
 });
