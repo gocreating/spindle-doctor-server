@@ -41,4 +41,54 @@ module.exports = function(Project) {
       path: '/:id/datasets/:fk/upload',
     },
   });
+
+  Project.remoteMethod('sessionStart', {
+    description: 'Starts a training session to feed data into a graph',
+    accepts: [{
+      arg: 'ctx',
+      type: 'object',
+      http: { source: 'context' },
+    }, {
+      arg: 'id',
+      type: 'any',
+      required: true,
+    }, {
+      arg: 'fk',
+      type: 'any',
+      required: true,
+      description: 'session id',
+    }],
+    returns: {
+      arg: 'startResult', type: 'object', root: true,
+    },
+    http: {
+      verb: 'post',
+      path: '/:id/sessions/:fk/start',
+    },
+  });
+
+  Project.remoteMethod('sessionStop', {
+    description: 'Stops a running session',
+    accepts: [{
+      arg: 'ctx',
+      type: 'object',
+      http: { source: 'context' },
+    }, {
+      arg: 'id',
+      type: 'any',
+      required: true,
+    }, {
+      arg: 'fk',
+      type: 'any',
+      required: true,
+      description: 'session id',
+    }],
+    returns: {
+      arg: 'stopResult', type: 'object', root: true,
+    },
+    http: {
+      verb: 'post',
+      path: '/:id/sessions/:fk/stop',
+    },
+  });
 };

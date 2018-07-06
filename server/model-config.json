@@ -65,7 +65,9 @@
         "sharedMethods": {
           "*": false,
           "find": true,
-          "upload": true
+          "upload": true,
+          "sessionStart": true,
+          "sessionStop": true
         }
       }
     }
@@ -94,5 +96,9 @@
   "SessionDataset": {
     "dataSource": "mongoDs",
     "public": true
+  },
+  "SessionProcess": {
+    "dataSource": "memoryDs",
+    "public": false
   }
 }

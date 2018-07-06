@@ -68,7 +68,9 @@
         "upload",
         "__create__sessions",
         "__get__sessions",
-        "__findById__sessions"
+        "__findById__sessions",
+        "sessionStart",
+        "sessionStop"
       ]
     }
   ],
