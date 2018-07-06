@@ -26,7 +26,9 @@
       "type": "object"
     },
     "graphId": {
-      "required": true
+      "type": {
+        "required": true
+      }
     }
   },
   "validations": [],
