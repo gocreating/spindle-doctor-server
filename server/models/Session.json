@@ -29,6 +29,9 @@
       "type": {
         "required": true
       }
+    },
+    "lastLog": {
+      "type": "object"
     }
   },
   "validations": [],

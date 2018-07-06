@@ -44,12 +44,20 @@ module.exports = function defineSessionRemoteMethods(app) {
           child.stdout.on('data', function(data) {
             sessionProcess.updateAttributes({
               stdout: sessionProcess.stdout + data,
+            }, function(err, sp) {
+              session.updateAttributes({
+                'lastLog.stdout': sp.stdout,
+              });
             });
           });
 
           child.stderr.on('data', function(data) {
             sessionProcess.updateAttributes({
               stderr: sessionProcess.stderr + data,
+            }, function(err, sp) {
+              session.updateAttributes({
+                'lastLog.stderr': sp.stderr,
+              });
             });
           });
 
@@ -64,9 +72,11 @@ module.exports = function defineSessionRemoteMethods(app) {
             // child process exited with code ${code}
             sessionProcess.destroy(function(err) {
               if (err) return cb(err);
+              console.log('>> Process', sessionProcess.pid, 'closed');
             });
           });
 
+          console.log('>> Process', sessionProcess.pid, 'started');
           cb(null, {
             sessionId: sessionProcess.sessionId,
             sessionProcessId: sessionProcess.id,
