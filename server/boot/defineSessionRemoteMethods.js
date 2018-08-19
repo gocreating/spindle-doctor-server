@@ -2,6 +2,54 @@
 
 var path = require('path');
 var spawn = require('child_process').spawn;
+var ds = require('../datasources.json');
+
+function launchSession(app, sess) {
+  var cwd = path.join(
+    __dirname,
+    '../../../spindle-doctor/src'
+  );
+  var flattenDeep = (arr) => (
+    arr.reduce((acc, val) => (
+      Array.isArray(val) ?
+      acc.concat(flattenDeep(val)) :
+      acc.concat(val)
+    ), [])
+  );
+  var hyperParameters = flattenDeep(
+    Object.entries(sess.hyperParameters)
+  );
+  var datasets = sess.datasets().map(d => {
+    return path.join(
+      __dirname,
+      '..',
+      '..',
+      ds.localFile.root,
+      d.container,
+      d.name
+    );
+  });
+  var name = `${sess.id}-${sess.name}`;
+  var args = [
+    path.join(cwd, sess.graph().trainScriptPath),
+    '--scope', 'api-server',
+    '--name', name,
+    ...hyperParameters,
+    '--srcs', ...datasets,
+    '--columns', ...sess.featureFields, sess.targetField,
+    '--dest', path.join(cwd,
+      '..',
+      'build',
+      'models',
+      'api-server',
+      name,
+      'model'
+    ),
+  ];
+  var child = spawn('python', args, { cwd: cwd });
+
+  return child;
+}
 
 module.exports = function defineSessionRemoteMethods(app) {
   var Project = app.models.Project;
@@ -25,15 +73,7 @@ module.exports = function defineSessionRemoteMethods(app) {
       }, function(err, session) {
         if (err) return cb(err);
 
-        var workingDirectory = path.join(
-          __dirname,
-          '../../../spindle-doctor/src'
-        );
-        var child = spawn('python', [
-          'test.py',
-        ], {
-          cwd: workingDirectory,
-        });
+        var child = launchSession(app, session);
 
         SessionProcess.create({
           pid: child.pid,
