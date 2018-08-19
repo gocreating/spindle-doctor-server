@@ -3,8 +3,8 @@
     {
       "name": "autoencoder-classification",
       "description": "Use reconstruction-based RNN autoencoder to detect anomalies.",
-      "trainScriptPath": "../spindle-doctor/src/classification-anomaly-detection.py",
-      "inferenceScriptPath": "../spindle-doctor/src/test-classification-anomaly-detection.py"
+      "trainScriptPath": "classification-anomaly-detection.py",
+      "inferenceScriptPath": "test-classification-anomaly-detection.py"
     }
   ]
 }
