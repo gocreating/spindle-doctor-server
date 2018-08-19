@@ -112,11 +112,25 @@ module.exports = function defineSessionRemoteMethods(app) {
             // child process exited with code ${code}
             sessionProcess.destroy(function(err) {
               if (err) return cb(err);
-              console.log('>> Process', sessionProcess.pid, 'closed');
+              console.log(
+                `>> Process ${sessionProcess.pid} closed`,
+                `(code: ${code})`
+              );
+              if (code != 0) {
+                Session.findOne({
+                  where: { id: fk },
+                }, function(err, session) {
+                  if (err) return cb(err);
+                  console.log('=== stderr ===');
+                  console.log(session.lastLog.stderr);
+                  console.log('\n=== stdout ===');
+                  console.log(session.lastLog.stdout);
+                });
+              }
             });
           });
 
-          console.log('>> Process', sessionProcess.pid, 'started');
+          console.log(`>> Process ${sessionProcess.pid} started`);
           cb(null, {
             sessionId: sessionProcess.sessionId,
             sessionProcessId: sessionProcess.id,
