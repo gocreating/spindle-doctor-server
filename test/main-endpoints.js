@@ -20,7 +20,6 @@ describe('\n\nEnd-to-End Test', function() {
   var memberUserToken = '';
   var projectId = '';
   var graphId = '';
-  var resGraphs = [];
   var datasetId = '';
   var sessionId = '';
   var sessionProcessId = '';
@@ -129,7 +128,6 @@ describe('\n\nEnd-to-End Test', function() {
             assert.equal(res.status, 200);
             assert.ok(res.body);
             graphId = res.body[0].id;
-            resGraphs = res.body;
             async.forEachOf(res.body, function(returnedGraph, idx, callback) {
               assert.equal(returnedGraph.name, graphs[idx].name);
               callback();
@@ -176,9 +174,25 @@ describe('\n\nEnd-to-End Test', function() {
           .send({
             name: 'sample-session',
             description: 'test session in a sandbox',
-            featureFields: ['feature1', 'feature2'],
-            targetField: 'label',
-            hyperParameters: {},
+            featureFields: [
+              'level_normalized_fft1',
+            ],
+            targetField: 'anomaly',
+            hyperParameters: {
+              '--step-size': '32',
+              '--hidden-size': '64',
+              '--embedding-size': '128',
+              '--symbol-size': '8',
+              '--batch-size': '128',
+              '--layer-depth': '2',
+              '--dropout-rate': '0.1',
+              '--learning-rates': [1, 500, 0.001],
+              '--sample-size': '128',
+              '--src-breakpoint': (
+                '../build/meta/phm2012' +
+                '/breakpoints-from-feature/breakpoint-8.csv'
+              ),
+            },
             graphId: graphId,
           })
           .set('Accept', 'application/json')
@@ -247,30 +261,6 @@ describe('\n\nEnd-to-End Test', function() {
             '/sessions/' + sessionId + '/start'
           )
           .query({ 'access_token': memberUserToken })
-          .send({
-            name: 'test-session',
-            description: 'ttttttestttttt',
-            featureFields: [
-              'level_normalized_fft1',
-            ],
-            targetField: 'anomaly',
-            hyperParameters: {
-              '--step-size': '32',
-              '--hidden-size': '64',
-              '--embedding-size': '128',
-              '--symbol-size': '8',
-              '--batch-size': '128',
-              '--layer-depth': '2',
-              '--dropout-rate': '0.1',
-              '--learning-rates': [1, 500, 0.001],
-              '--sample-size': '128',
-              '--src-breakpoint': (
-                '../build/meta/phm2012' +
-                '/breakpoints-from-feature/breakpoint-8.csv'
-              ),
-            },
-            graphId: resGraphs[0].id,
-          })
           .set('Accept', 'application/json')
           .set('Content-Type', 'application/json')
           .end(function(err, res) {
