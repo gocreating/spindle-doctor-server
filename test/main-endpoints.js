@@ -18,8 +18,10 @@ describe('\n\nEnd-to-End Test', function() {
   var memberUserToken = '';
   var projectId = '';
   var graphId = '';
+  var resGraphs = [];
   var datasetId = '';
   var sessionId = '';
+  var sessionProcessId = '';
 
   before(function(done) {
     server = app.listen(function waitForBoot() {
@@ -123,6 +125,7 @@ describe('\n\nEnd-to-End Test', function() {
             assert.equal(res.status, 200);
             assert.ok(res.body);
             graphId = res.body[0].id;
+            resGraphs = res.body;
             async.forEachOf(res.body, function(returnedGraph, idx, callback) {
               assert.equal(returnedGraph.name, graphs[idx].name);
               callback();
@@ -228,6 +231,80 @@ describe('\n\nEnd-to-End Test', function() {
             assert.ok(res.body);
             assert.containsAllKeys(session, ['graph', 'project', 'datasets']);
             assert.isArray(session.datasets, 'datasets is not an array');
+            done();
+          });
+      });
+
+      it('Project owner should start a specific session', function(done) {
+        superagent
+          .post(
+            ENDPOINT +
+            '/projects/' + projectId +
+            '/sessions/' + sessionId + '/start'
+          )
+          .query({ 'access_token': memberUserToken })
+          .send({
+            name: 'test-session',
+            description: 'ttttttestttttt',
+            featureFields: [
+              'level_normalized_fft1',
+            ],
+            targetField: 'anomaly',
+            hyperParameters: {
+              '--step-size': '32',
+              '--hidden-size': '64',
+              '--embedding-size': '128',
+              '--symbol-size': '8',
+              '--batch-size': '128',
+              '--layer-depth': '2',
+              '--dropout-rate': '0.1',
+              '--learning-rates': [1, 500, 0.001],
+              '--sample-size': '128',
+              '--src-breakpoint': (
+                '../build/meta/phm2012' +
+                '/breakpoints-from-feature/breakpoint-8.csv'
+              ),
+            },
+            graphId: resGraphs[0].id,
+          })
+          .set('Accept', 'application/json')
+          .set('Content-Type', 'application/json')
+          .end(function(err, res) {
+            if (err) { return done(err); }
+
+            assert.equal(res.status, 200);
+            assert.ok(res.body);
+            assert.containsAllKeys(res.body, [
+              'sessionId',
+              'sessionProcessId',
+            ]);
+            sessionProcessId = res.body.sessionProcessId;
+            done();
+          });
+      });
+
+      it('Project owner should stop a running session', function(done) {
+        superagent
+          .post(
+            ENDPOINT +
+            '/projects/' + projectId +
+            '/sessions/' + sessionId + '/stop'
+          )
+          .query({ 'access_token': memberUserToken })
+          .set('Accept', 'application/json')
+          .set('Content-Type', 'application/json')
+          .end(function(err, res) {
+            if (err) { return done(err); }
+
+            assert.equal(res.status, 200);
+            assert.ok(res.body);
+            assert.containsAllKeys(res.body, [
+              'sessionId',
+              'sessionProcessId',
+              'stdout',
+              'stderr',
+            ]);
+            assert.equal(res.body.sessionProcessId, sessionProcessId);
             done();
           });
       });

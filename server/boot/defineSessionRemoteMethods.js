@@ -121,10 +121,12 @@ module.exports = function defineSessionRemoteMethods(app) {
                   where: { id: fk },
                 }, function(err, session) {
                   if (err) return cb(err);
-                  console.log('=== stderr ===');
-                  console.log(session.lastLog.stderr);
-                  console.log('\n=== stdout ===');
-                  console.log(session.lastLog.stdout);
+                  if (session.lastLog) {
+                    console.log('=== stderr ===');
+                    console.log(session.lastLog.stderr);
+                    console.log('\n=== stdout ===');
+                    console.log(session.lastLog.stdout);
+                  }
                 });
               }
             });
