@@ -1,8 +1,14 @@
 {
   "files": {
-    "loopback#static": {
-      "params": "$!../client/build"
-    }
+    "loopback#static": [{
+      "name": "client",
+      "paths": ["/client"],
+      "params": "$!../client"
+    }, {
+      "name": "models",
+      "paths": ["/models"],
+      "params": "$!../../spindle-doctor/build/models/api-server"
+    }]
   },
   "files:after": {
     "./middlewares/reactRouter": {
