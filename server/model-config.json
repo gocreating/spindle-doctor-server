@@ -111,7 +111,8 @@
           "create": true,
           "login": true,
           "logout": true,
-          "exists": true
+          "exists": true,
+          "deployModel": true
         }
       }
     }
