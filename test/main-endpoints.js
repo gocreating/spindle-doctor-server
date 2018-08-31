@@ -6,7 +6,7 @@ var async = require('async');
 var app = require('../server/server');
 var tongtaiUsers = require('../server/initial-data/tongtai-users.json');
 var graphs = require('../server/initial-data/graphs.json').graphs;
-var ENDPOINT = 'http://localhost:5000/api';
+var ENDPOINT = 'http://localhost:3002/api';
 
 describe('\n\nEnd-to-End Test', function() {
   var server;
