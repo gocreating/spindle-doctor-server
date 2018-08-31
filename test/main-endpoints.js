@@ -6,12 +6,14 @@ var async = require('async');
 var app = require('../server/server');
 var tongtaiUsers = require('../server/initial-data/tongtai-users.json');
 var graphs = require('../server/initial-data/graphs.json').graphs;
+var edges = require('../server/initial-data/edges.json').edges;
 var ENDPOINT = 'http://localhost:3002/api';
 
 describe('\n\nEnd-to-End Test', function() {
   var server;
   var admin = tongtaiUsers.admins[0];
   var member = tongtaiUsers.users[0];
+  var edge = edges[0];
   var adminUserId = '';
   var adminUserToken = '';
   var memberUserId = '';
@@ -22,6 +24,8 @@ describe('\n\nEnd-to-End Test', function() {
   var datasetId = '';
   var sessionId = '';
   var sessionProcessId = '';
+  var edgeId = '';
+  var edgeToken = '';
 
   before(function(done) {
     server = app.listen(function waitForBoot() {
@@ -307,6 +311,53 @@ describe('\n\nEnd-to-End Test', function() {
             assert.equal(res.body.sessionProcessId, sessionProcessId);
             done();
           });
+      });
+    });
+
+    describe('#Edge', function() {
+      it('Edge should register to cloud', function(done) {
+        superagent
+          .post(ENDPOINT + '/edges')
+          .send({
+            email: edge.email,
+            password: edge.password,
+            'ip_address': edge.ip_address,
+            port: edge.port,
+            description: edge.description,
+            projectId: projectId,
+          })
+          .set('Accept', 'application/json')
+          .set('Content-Type', 'application/json')
+          .end(function(err, res) {
+            if (err) { return done(err); }
+
+            assert.equal(res.status, 200);
+            assert.ok(res.body);
+            done();
+          });
+      });
+
+      it('Registered edge should log in', function(done) {
+        async.forEachOf([member, admin], (user, idx, callback) => {
+          superagent
+            .post(ENDPOINT + '/edges/login')
+            .send({
+              email: edge.email,
+              password: edge.password,
+            })
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .end(function(err, res) {
+              if (err) { return callback(err); }
+
+              assert.equal(res.status, 200);
+              assert.ok(res.body);
+
+              edgeId = res.body.userId;
+              edgeToken = res.body.id;
+              callback();
+            });
+        }, done);
       });
     });
   });

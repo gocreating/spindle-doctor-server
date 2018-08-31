@@ -100,5 +100,20 @@
   "SessionProcess": {
     "dataSource": "memoryDs",
     "public": false
+  },
+  "Edge": {
+    "dataSource": "mongoDs",
+    "public": true,
+    "options": {
+      "remoting": {
+        "sharedMethods": {
+          "*": false,
+          "create": true,
+          "login": true,
+          "logout": true,
+          "exists": true
+        }
+      }
+    }
   }
 }

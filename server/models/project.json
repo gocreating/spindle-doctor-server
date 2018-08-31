@@ -36,6 +36,11 @@
       "type": "hasMany",
       "model": "Session",
       "foreignKey": "projectId"
+    },
+    "edges": {
+      "type": "hasMany",
+      "model": "Edge",
+      "foreignKey": "projectId"
     }
   },
   "acls": [

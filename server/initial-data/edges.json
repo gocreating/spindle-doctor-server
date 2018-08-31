@@ -1,0 +1,11 @@
+{
+  "edges":  [
+    {
+      "email": "0001@edge.tt.com",
+      "password": "0001",
+      "ip_address": "140.113.236.43",
+      "port": "4000",
+      "description": "Description of edge 0001."
+    }
+  ]
+}
