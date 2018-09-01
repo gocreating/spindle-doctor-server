@@ -112,7 +112,8 @@
           "login": true,
           "logout": true,
           "exists": true,
-          "deployModel": true
+          "deployModel": true,
+          "readInferenceStatus": true
         }
       }
     }

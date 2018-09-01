@@ -26,4 +26,25 @@ module.exports = function(Edge) {
       path: '/:id/deploy-model/:modelId',
     },
   });
+
+  Edge.remoteMethod('readInferenceStatus', {
+    description: 'Read the last inference result from an edge.',
+    accepts: [{
+      arg: 'ctx',
+      type: 'object',
+      http: { source: 'context' },
+    }, {
+      arg: 'id',
+      type: 'any',
+      required: true,
+      description: 'edge id',
+    }],
+    returns: {
+      arg: 'readInferenceStatusResult', type: 'object', root: true,
+    },
+    http: {
+      verb: 'get',
+      path: '/:id/status',
+    },
+  });
 };

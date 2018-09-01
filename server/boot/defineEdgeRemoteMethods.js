@@ -30,4 +30,22 @@ module.exports = function defineDeployModel(app) {
       });
     });
   };
+
+  Edge.readInferenceStatus = function(ctx, id, cb) {
+    Edge.findById(id, function(err, edge) {
+      if (err || !edge) return cb(err);
+
+      var edgeEndpoint = `http://${edge.ip_address}:${edge.port}`;
+
+      superagent
+        .get(`${edgeEndpoint}/inference-result/last.txt`)
+        .end(function(err, res) {
+          if (err) { cb(err); }
+
+          cb(null, {
+            status: res.text,
+          });
+        });
+    });
+  };
 };
